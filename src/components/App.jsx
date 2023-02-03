@@ -1,38 +1,61 @@
-import { Component } from "react";
-import { ToastContainer } from "react-toastify";
+import { Component } from 'react';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import css from "./App.module.css"
-import { Searchbar } from "./Searchbar/Searchbar";
-import {ImageGallery} from "./ImageGallery/ImageGallery";
-import Button from "./Button/Button";
-import Modal from "./Modal/Modal";
+import css from './App.module.css';
+import { Searchbar } from './Searchbar/Searchbar';
+import { getImages } from 'services/api';
+import { ImageGallery } from './ImageGallery/ImageGallery';
+import Button from './Button/Button';
 
 export class App extends Component {
   state = {
     searchQuery: '',
+    images: [],
     page: 1,
-    showModal: false,
+    totalHits: null,
+  };
+
+  componentDidUpdate(_, prevState) {
+    if (
+      prevState.page !== this.state.page ||
+      prevState.searchQuery !== this.state.searchQuery
+    ) {
+      getImages(this.state.searchQuery, this.state.page)
+      .then(data =>
+        this.setState({
+          images: data.hits,
+          totalHits: data.totalHits,
+        })
+      )
+      .catch(error => this.setState({ error }))
+      .finally(() => this.setState({ loading: false }));
+    }
   }
 
-handleFormSubmit = searchQuery => {
-  this.setState({searchQuery})
-}
+  handleButtonClick = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
+  };
 
-toggleModal =() => {
-  this.setState(({showModal}) => ({showModal: !showModal}))
-}
+  handleFormSubmit = query => {
+    this.setState({
+      searchQuery: query,
+      images: [],
+      page: 1,
+      totalHits: null,
+    });
+  };
 
-  render(){
+  render() {
     return (
       <div className={css.app}>
         <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery searchQuery={this.state.searchQuery} page={this.state.page} onClick={this.toggleModal}/>
-        <Button/>
-
-       {this.state.showModal && (<Modal onClose={this.toggleModal}><img src="" alt="" /></Modal>)} 
-
+        <ImageGallery
+          searchQuery={this.state.searchQuery}
+          page={this.state.page}
+        />
+        <Button onClick={this.handleButtonClick} />
         <ToastContainer />
       </div>
     );
   }
-};
+}
