@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { toast } from 'react-toastify';
 import { RxMagnifyingGlass } from 'react-icons/rx';
 import css from './Searchbar.module.css';
+import PropTypes from 'prop-types';
 
 export class Searchbar extends Component {
   state = {
@@ -30,8 +31,6 @@ export class Searchbar extends Component {
       <header className={css.search__bar}>
         <form className={css.search__form} onSubmit={this.handleSubmit}>
           <button type="submit" className={css.search__form__button}>
-            {/* <span className={css.search__form__button__label}>
-              Search</span> */}
             <RxMagnifyingGlass style={{ width: 25, height: 25 }} />
           </button>
 
@@ -48,4 +47,8 @@ export class Searchbar extends Component {
       </header>
     );
   }
+}
+
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func,
 }

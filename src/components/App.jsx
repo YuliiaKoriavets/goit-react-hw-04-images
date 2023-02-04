@@ -58,13 +58,14 @@ export class App extends Component {
   };
 
   render() {
+    const {error, loading, images, totalHits } = this.state
     return (
       <div className={css.app}>
         <Searchbar onSubmit={this.handleFormSubmit} />
-        {this.state.error && <p>{this.state.error.message}</p>}
-        {this.state.loading && <InfinitySpin width="200" color="#3f51b5" />} 
-        {this.state.images && <ImageGallery imagesArr={this.state.images} />}
-        {this.state.totalHits > 12 && (
+        {error && <p>{error.message}</p>}
+        {loading && <InfinitySpin width="200" color="#3f51b5" />} 
+        {images && <ImageGallery imagesArr={this.state.images} />}
+        {totalHits > 12 && (
           <Button onClick={this.handleButtonClick} />
         )}
         <ToastContainer />
